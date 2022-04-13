@@ -10,15 +10,20 @@
             background-color: #FBAB7E;
             background-image: linear-gradient(90deg, #FBAB7E 0%, #f9df9e 100%);
         }
-        h1, .font-name {
+        h1 {
             font-family: 'EVAA';
             text-align: center;
         }
 
-        h5 {
-            font-size: 11px;
+        h5, .font-name {
+            font-family: 'Apex Mk3-Medium';
+            font-size: 12px;
             text-align: center;
             font-weight: bolder;
+        }
+        .font-name {
+            margin-top: 15px;
+            color: #37b3b3;
         }
 
         .font {
@@ -41,18 +46,14 @@
         return response.json();  // converting byte data to json
     }).then(data=>{
         data.tree.forEach(item => {
-            var fontPath = item.path;
-            var fontName = fontPath.replace(/\.[^/.]+$/, "")
-            console.log(fontName);
-            importFont(fontName, fontPath);
-            addFontToPage(fontName);
+            if(!item.path.includes("html")){
+                var fontPath = item.path;
+                var fontName = fontPath.replace(/\.[^/.]+$/, "")
+                console.log(fontName);
+                importFont(fontName, fontPath);
+                addFontToPage(fontName, fontPath);
+            }
         })
-        // adding content
-        h1.textContent = title;
-        p.textContent = body;
-
-        // appending to div element
-        div.appendChild(h1);  div.appendChild(p);
     });
 
     function importFont(name, path){
@@ -65,14 +66,11 @@
         }).catch(function(error) {
             if(error){
                 console.error("Could not load font " + name + " located at " + "./" + filledPath);
-            }else {
-                addFontToPage(name);
             }
-            
         });
     }
 
-    function addFontToPage(name){
+    function addFontToPage(name, fontPath){
         var div  = document.getElementById("font-container");
 
         var font = document.createElement("div");
@@ -83,12 +81,13 @@
         p.style.fontFamily = name;
         p.style.fontSize = 15;
         
-        var p2 = document.createElement('p');
-        p2.textContent = name;
-        p2.className = "font-name";
+        var a = document.createElement('a');
+        a.textContent = name;
+        a.href = "https://github.com/intradeus/Fonts/blob/master/" + fontPath;
+        a.className = "font-name";
 
         font.appendChild(p);
-        font.appendChild(p2);
+        font.appendChild(a);
         div.appendChild(font);
 
     }
