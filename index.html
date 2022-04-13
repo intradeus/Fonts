@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intradeus' fonts for personal use</title>
+     <style>
+        html, body {
+            background-color: #FBAB7E;
+            background-image: linear-gradient(90deg, #FBAB7E 0%, #f9df9e 100%);
+        }
+        h1, .font-name {
+            font-family: 'EVAA';
+            text-align: center;
+        }
+
+        h5 {
+            font-size: 11px;
+            text-align: center;
+            font-weight: bolder;
+        }
+
+        .font {
+            border-bottom : 1px solid black;
+        }
+
+    </style>
+</head>
+<body>
+    <h1>Fonts for personal use</h1>
+    <h5>WARNING: Do your own research before using the fonts listed here, you might not be allowed to use it in your use case!</h5>
+    <div id="font-container">
+
+    </div>
+</body>
+<script>
+    var url = "https://api.github.com/repos/intradeus/Fonts/git/trees/master?recursive=1"
+
+    fetch(url).then((response)=>{  
+        return response.json();  // converting byte data to json
+    }).then(data=>{
+        data.tree.forEach(item => {
+            var fontPath = item.path;
+            var fontName = fontPath.replace(/\.[^/.]+$/, "")
+            console.log(fontName);
+            importFont(fontName, fontPath);
+            addFontToPage(fontName);
+        })
+        // adding content
+        h1.textContent = title;
+        p.textContent = body;
+
+        // appending to div element
+        div.appendChild(h1);  div.appendChild(p);
+    });
+
+    function importFont(name, path){
+        var filledPath = path.replaceAll(" ", "%20");
+        // https://usefulangle.com/post/74/javascript-dynamic-font-loading
+        var junction_font = new FontFace(name, 'url(./' + filledPath + ')');
+        junction_font.load().then(function(loaded_face) {
+            document.fonts.add(loaded_face);
+            document.body.style.fontFamily = name;
+        }).catch(function(error) {
+            if(error){
+                console.error("Could not load font " + name + " located at " + "./" + filledPath);
+            }else {
+                addFontToPage(name);
+            }
+            
+        });
+    }
+
+    function addFontToPage(name){
+        var div  = document.getElementById("font-container");
+
+        var font = document.createElement("div");
+        font.style = "display: flex; justify-content: space-between"
+        font.className = "font"
+        var p = document.createElement('p');
+        p.textContent = "The quick brown fox jumps over the lazy dog."
+        p.style.fontFamily = name;
+        p.style.fontSize = 15;
+        
+        var p2 = document.createElement('p');
+        p2.textContent = name;
+        p2.className = "font-name";
+
+        font.appendChild(p);
+        font.appendChild(p2);
+        div.appendChild(font);
+
+    }
+</script>
+</html>
